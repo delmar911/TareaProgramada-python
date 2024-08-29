@@ -11,6 +11,7 @@ from .serializer import UserSerializer
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 import threading
+from .models import UsuarioExtendido
 # Create your views here.
 
 
@@ -38,7 +39,7 @@ def registro(request):
         serializer = UserSerializer(data=request.data)
         print(request.data)
         # Verificar si el usuario ya existe por email
-        if User.objects.filter(email=request.data.get('email')).exists():
+        if UsuarioExtendido.objects.filter(email=request.data.get('email')).exists():
             return Response({'error': 'El usuario ya se encuentra registrado'}, status=status.HTTP_401_UNAUTHORIZED)
         
         if serializer.is_valid():
@@ -67,7 +68,6 @@ def registro(request):
             return Response({'token': token.key}, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 #acceso al perfil
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])

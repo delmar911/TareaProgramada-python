@@ -83,9 +83,18 @@ WSGI_APPLICATION = 'sistema.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'tallerTask.sqlite3',
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'tallerTask.sqlite3',
+    # }
+      'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'taskdb',
+        'USER': 'root',
+       # 'PASSWORD': '123456',
+        'PASSWORD': 'root123',# se debe cambiar esto de acuerdo a la DB que van a utilizar
+        'HOST': 'localhost',  # o la dirección IP de tu servidor MySQL
+        'PORT': '3306',       
     }
 }
 
@@ -107,6 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+AUTH_USER_MODEL = 'Task.UsuarioExtendido' 
 
 
 # Internationalization
