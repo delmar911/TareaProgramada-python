@@ -145,36 +145,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
+    'django.contrib.auth.backends.ModelBackend'
 ]
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    
 # EMAIL_BACKEND = 'MI CONFIGURACION DE CORREO'
-
-# Redirección del usuario cuando es autenticado (logueado)
-ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
-
-# Ruta adonde va a parar el usuario logueado
-LOGIN_REDIRECT_URL = 'home'
-
-# Sistema de autenticación que permite que el usuario ingrese el nombre de usuario o el email con el que se registró
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
-
-# Determina que el registro necesita si o si de un email
-ACCOUNT_EMAIL_REQUIRED = True
-
-# Se puede registrar un unico email por usuario (no se puede repetir)
-ACCOUNT_UNIQUE_EMAIL = True
-
-# Hace que sea obligatorio verificar la cuenta haciendo clic en el link que se envía por correo
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-
-# Cantidad de días en los que se puede hacer click en el link de autenticación
-ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 7
-
-# Hacer que al cerrar la sesión, no se pase a una ventana de verificación de cierre de sesión
-ACCOUNT_LOGOUT_ON_GET = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.googlemail.com'
 EMAIL_PORT = 587

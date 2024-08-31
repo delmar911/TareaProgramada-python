@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Usuarios mayores de 18 con T.I</title>
+</head>
+<body>
+    <h1>Usuarios mayores de 18 con T.I,</h1>
+    <ul>
+        {% for usuario in usuarios %}
+            <li>{{ usuario.username }} - {{ usuario.fecha_nacimiento }}</li>
+        {% endfor %}
+    </ul>
+    <p>Se le solicita cambiar el tipo de documento</p>
+</body>
+</html>

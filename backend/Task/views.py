@@ -5,19 +5,39 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import viewsets, filters, status
+from dateutil.relativedelta import relativedelta
 from django.template.loader import render_to_string
 from sistema import settings
 from .serializer import UserSerializer
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
+from django.core.mail import EmailMultiAlternatives
 import threading
 from .models import UsuarioExtendido
-# Create your views here.
+from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import date, timedelta
+from django.utils import timezone
+from Task.task import usuarios_mayores_de_18_con_ti, enviar_correoCambioPsswrd
 
 
-from django.core.mail import EmailMultiAlternatives
+def iniciar_schedulerCambioDcmnto():
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(usuarios_mayores_de_18_con_ti,  'interval', minutes=1)
+    scheduler.start()
+    print("Scheduler iniciado")
 
-# Create your views here.
+
+iniciar_schedulerCambioDcmnto()
+
+def iniciar_cambioPsswrd():
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(enviar_correoCambioPsswrd,  'interval', minutes=1)
+    scheduler.start()
+    print("Scheduler iniciado cambio password")
+
+
+iniciar_cambioPsswrd()
+
 
 @api_view(['POST'])
 def iniciarSesion(request):
@@ -75,3 +95,4 @@ def registro(request):
 def perfil(request):
     
     return Response("Usted está iniciando sesión con {}".format(request.user.email), status=status.HTTP_200_OK)
+
