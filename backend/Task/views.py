@@ -17,12 +17,12 @@ from .models import UsuarioExtendido
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import date, timedelta
 from django.utils import timezone
-from Task.task import usuarios_mayores_de_18_con_ti, enviar_correoCambioPsswrd
+from Task.task import usuarios_mayores_de_18_con_ti, enviar_correoCambioPsswrd, verificar_usuarios_inactivos
 
 
 def iniciar_schedulerCambioDcmnto():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(usuarios_mayores_de_18_con_ti,  'interval', minutes=1)
+    scheduler.add_job(usuarios_mayores_de_18_con_ti,  'interval', minutes=60)
     scheduler.start()
     print("Scheduler iniciado")
 
@@ -31,13 +31,19 @@ iniciar_schedulerCambioDcmnto()
 
 def iniciar_cambioPsswrd():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(enviar_correoCambioPsswrd,  'interval', minutes=1)
+    scheduler.add_job(enviar_correoCambioPsswrd,  'interval', minutes=60)
     scheduler.start()
     print("Scheduler iniciado cambio password")
 
 
 iniciar_cambioPsswrd()
 
+def iniciar_usuarioBloqueado():
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(verificar_usuarios_inactivos, 'cron', day_of_week='mon', hour=15, minute=18)
+    scheduler.start()
+    print("Scheduler iniciado verificar usuarios inactivos")
+iniciar_usuarioBloqueado()
 
 @api_view(['POST'])
 def iniciarSesion(request):

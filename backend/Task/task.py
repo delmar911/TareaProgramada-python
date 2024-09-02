@@ -33,23 +33,22 @@ def usuarios_mayores_de_18_con_ti():
 
 def obtener_usuarios_para_cambio_password():
     hoy = timezone.now().date()
-    # Por ejemplo, supongamos que la contraseña debe cambiarse cada 90 días
-    fecha_limite = hoy - timedelta(days=1)
+    # La contraseña debe cambiarse si no se ha actualizado en los últimos 5 días
+    fecha_limite = hoy - timedelta(days=5)
     usuarios = UsuarioExtendido.objects.filter(
-        date_joined=fecha_limite
+        fecha_ultima_contrasenna=fecha_limite
     )
     return usuarios
+
 def enviar_correoCambioPsswrd():
     usuarios = obtener_usuarios_para_cambio_password()
     
     for usuario in usuarios:
         try:
-            
             asunto = 'Notificación de Cambio de Contraseña'
             mensaje = (
                 f'Hola {usuario.username},\n\n'
-                f'Este es un recordatorio para que actualices tu contraseña.\n'
-                
+                f'Este es un recordatorio para que actualices tu contraseña, ya que no ha sido cambiada en los últimos 5 días.\n'
             )
             email_from = settings.EMAIL_HOST_USER
             recipient_list = [usuario.email]
@@ -57,5 +56,43 @@ def enviar_correoCambioPsswrd():
             print(f'Correo enviado a: {usuario.email}')
         except Exception as e:
             print(f'Error al enviar correo a {usuario.email}: {e}')
-    print("Ejecutando la función de cambiar password")
+    print("Ejecutando la función de enviar correos para cambio de contraseña")
     
+def verificar_usuarios_inactivos():
+    # Obtener fecha límite de un mes
+    hace_un_mes = timezone.now() - timedelta(days=30)
+
+    # Buscar usuarios que no han iniciado sesión hace más de un mes y que están activos
+    usuarios_a_bloquear = UsuarioExtendido.objects.filter(last_login__lt=hace_un_mes, is_active=1)
+
+
+    # Verificar si se encontraron usuarios
+    if not usuarios_a_bloquear.exists():
+        print("No se encontraron usuarios inactivos para bloquear.")
+    else:
+        print(f"Usuarios encontrados para bloquear: {usuarios_a_bloquear.count()}")
+        for usuario in usuarios_a_bloquear:
+            print(f"Usuario: {usuario.username}, Último inicio de sesión: {usuario.last_login}, Email: {usuario.email}")
+
+    for usuario in usuarios_a_bloquear:
+        try:
+            # Bloquear usuario marcándolo como inactivo
+            usuario.is_active = 0
+            usuario.save()
+
+            # Enviar correo de notificación
+            asunto = 'Cuenta bloqueada por inactividad'
+            mensaje = (
+                f'Hola {usuario.username},\n\n'
+                'Tu cuenta ha sido bloqueada debido a la inactividad prolongada. '
+                'Si necesitas ayuda o crees que esto es un error, por favor contacta con soporte.'
+            )
+            email_from = settings.EMAIL_HOST_USER  # Usa el email configurado en settings
+            recipient_list = [usuario.email]
+
+            send_mail(asunto, mensaje, email_from, recipient_list, fail_silently=False)
+            print(f'Correo enviado a: {usuario.email}')
+        except Exception as e:
+            print(f'Error al enviar correo a {usuario.email}: {e}')
+
+    print("Verificación de usuarios inactivos completada.")

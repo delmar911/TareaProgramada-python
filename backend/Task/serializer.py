@@ -5,7 +5,7 @@ from .models import UsuarioExtendido
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UsuarioExtendido
-        fields = ['id', 'username', 'email', 'password', 'tipo_documento', 'numero_documento', 'fecha_nacimiento']
+        fields = ['id', 'username', 'email', 'password', 'tipo_documento', 'numero_documento', 'fecha_nacimiento', 'fecha_ultima_contrasenna']
 
     def create(self, validated_data):
         user = UsuarioExtendido.objects.create_user(
@@ -14,6 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
             password=validated_data['password'],
             tipo_documento=validated_data.get('tipo_documento', ''),
             numero_documento=validated_data.get('numero_documento', ''),
-            fecha_nacimiento=validated_data.get('fecha_nacimiento', None)
+            fecha_nacimiento=validated_data.get('fecha_nacimiento', None),
+            fecha_ultima_contrasenna = validated_data.get('fecha_ultima_contrasenna', None)
         )
         return user
